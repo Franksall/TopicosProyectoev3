@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compresión y Descompresión LZ77</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Animate.css CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .card {
+            padding: 20px;
+            border-radius: 8px;
+            animation: fadeIn 1.5s ease; /* Card animación de entrada */
+        }
+        .btn-primary, .btn-success {
+            width: 100%;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover, .btn-success:hover {
+            background-color: #0056b3; /* Efecto hover */
+        }
+        .file-upload {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border: 2px dashed #007bff;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .file-upload:hover {
+            background-color: #e9ecef;
+            transform: scale(1.05); /* Efecto de agrandamiento al pasar */
+        }
+        /* Definir la animación fadeIn */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card shadow-sm animate__animated animate__fadeInUp">
+        <h3 class="text-center mb-4">Compresión y Descompresión de Archivos (LZ77)</h3>
+
+        <form id="upload-form" action="/compress" method="post" enctype="multipart/form-data">
+            <div class="file-upload animate__animated animate__pulse animate__infinite" onclick="document.getElementById('file').click();">
+                <input type="file" name="file" id="file" style="display: none;" required>
+                <p class="text-secondary">Haz clic aquí para seleccionar un archivo</p>
+            </div>
+
+            <div class="form-group">
+                <label for="buffer_size">Tamaño del Buffer</label>
+                <input type="number" class="form-control animate__animated animate__fadeInRight" id="buffer_size" name="buffer_size" placeholder="Tamaño del Buffer" min="1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="dictionary_size">Tamaño del Diccionario</label>
+                <input type="number" class="form-control animate__animated animate__fadeInRight" id="dictionary_size" name="dictionary_size" placeholder="Tamaño del Diccionario" min="1" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary animate__animated animate__heartBeat">Comprimir Archivo</button>
+        </form>
+
+        <form id="decompress-form" action="/decompress" method="post" enctype="multipart/form-data" class="mt-3">
+            <div class="file-upload animate__animated animate__pulse animate__infinite" onclick="document.getElementById('decompress-file').click();">
+                <input type="file" name="file" id="decompress-file" style="display: none;" required>
+                <p class="text-secondary">Haz clic aquí para seleccionar un archivo para descomprimir</p>
+            </div>
+            <button type="submit" class="btn btn-success animate__animated animate__heartBeat">Descomprimir Archivo</button>
+        </form>
+
+        <div id="feedback" class="mt-3"></div>
+    </div>
+</div>
+
+<!-- jQuery, Bootstrap JS, and custom JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#upload-form').on('submit', function(e) {
+            e.preventDefault();
+            let form = $(this);
+            $.ajax({
+                type: form.attr('method'),
+                url: form.attr('action'),
+                data: new FormData(this),
+                processData: false,
+                contentType: false,
+                success: function() {
+                    $('#feedback').html('<div class="alert alert-success animate__animated animate__fadeIn">Archivo comprimido con éxito.</div>');
+                },
+                error: function() {
+                    $('#feedback').html('<div class="alert alert-danger animate__animated animate__fadeIn">Error al comprimir el archivo.</div>');
+                }
+            });
+        });
+
+        $('#decompress-form').on('submit', function(e) {
+            e.preventDefault();
+            let form = $(this);
+            $.ajax({
+                type: form.attr('method'),
+                url: form.attr('action'),
+                data: new FormData(this),
+                processData: false,
+                contentType: false,
+                success: function() {
+                    $('#feedback').html('<div class="alert alert-success animate__animated animate__fadeIn">Archivo descomprimido con éxito.</div>');
+                },
+                error: function() {
+                    $('#feedback').html('<div class="alert alert-danger animate__animated animate__fadeIn">Error al descomprimir el archivo.</div>');
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
